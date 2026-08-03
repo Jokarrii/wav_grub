@@ -1,47 +1,29 @@
 
-#include "wav_viewer.hpp"
-
-bool checkID(std::ifstream& file, const char expected[4])
-{
-	char id[4];
-
-	file.read(id, 4);
-	if (!file)
-		return false;
-	return (std::memcmp(id, expected, 4) == 0);
-}
+#include <iostream>
+#include <string>
+#include <vector>
+#include "Wav.hpp"
 
 int	main(int argc, char **argv)
 {
-	uint32_t fileSize;
-
 	if (argc != 2)
 	{
 		std::cout << "Wrong number of argument. Usage: execute the binary with the wav file name" << std::endl;
 		return (0);
 	}
-	std::ifstream file(argv[1], std::ios::binary);
-	if (!file)
-	{
-		std::cerr << "wav file can't be opened" << std::endl;
-		return 1;
-	}
-	if (checkID(file, "RIFF"))
-		std::cout << "RIFF OK" << std::endl;
-	else
-	{
-		std::cout << "RIFF not OK" << std::endl;
-		return 1;
-	}
-	file.read(reinterpret_cast<char*>(&fileSize), sizeof(fileSize));
-	std::cout << "Taille du fichier: " << fileSize << std::endl;
-	if (checkID(file, "WAVE"))
-		std::cout << "WAVE OK" << std::endl;
-	else
-	{
-		std::cout << "WAVE not OK" << std::endl;
-		return 1;
-	}
-	manageChunk(file);
-	std::cout << "Position : " << file.tellg() << std::endl;
+	std::string filename = argv[1];
+	Wav wav1(filename);
+
+	std::cout << "File size: " << wav1.fileSize() << std::endl;
+	std::cout << "Audio format: " << wav1.audioFormat() << std::endl;
+	std::cout << "Channels: " << wav1.channels() << std::endl;
+	std::cout << "sample rate: " << wav1.sampleRate() << std::endl;
+	std::cout << "byte rate: " << wav1.byteRate() << std::endl;
+	std::cout << "Block align: " << wav1.blockAlign() << std::endl;
+	std::cout << "bits per sample: " << wav1.bitsPerSample() << std::endl;
+	std::cout << "Data size: " << wav1.dataSize() << std::endl;
+	std::cout << "Sample count: " << wav1.sampleCount() << std::endl;
+	std::cout << "Frame count: " << wav1.frameCount() << std::endl;
+
+	return 0;
 }
