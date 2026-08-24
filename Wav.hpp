@@ -27,17 +27,17 @@ public:
 	explicit Wav(const std::string& filename);
 
 /*---------------- getter -----------------*/
-	uint32_t						fileSize() const;
-	uint16_t						audioFormat() const;
-	uint16_t						channels() const;
-	uint32_t						sampleRate() const;
-	uint32_t						byteRate() const;
-	uint16_t						blockAlign() const;
-	uint16_t						bitsPerSample() const;
-	uint32_t						dataSize() const;
-	uint32_t						sampleCount() const;
-	uint32_t						frameCount() const;
-	const std::vector<std::byte>&	data() const;
+	uint32_t	fileSize() const;
+	uint16_t	audioFormat() const;
+	uint16_t	channels() const;
+	uint32_t	sampleRate() const;
+	uint32_t	byteRate() const;
+	uint16_t	blockAlign() const;
+	uint16_t	bitsPerSample() const;
+	uint32_t	dataSize() const;
+	uint32_t	sampleCount() const;
+	uint32_t	frameCount() const;
+	void		take_a_look_to_data(unsigned int frameNb) const;
 
 private:
 
@@ -47,6 +47,13 @@ private:
 	void readFmtChunk(std::ifstream& file, uint32_t chunkSize);
 	void readDataChunk(std::ifstream& file, uint32_t chunkSize);
 	SampleFormat determineFormat() const;
+
+	void printPCM8(unsigned int frameNb) const;
+	void printPCM16(unsigned int frameNb) const;
+	void printPCM24(unsigned int frameNb) const;
+	void printPCM32(unsigned int frameNb) const;
+	void printFloat32(unsigned int frameNb) const;
+	void printFloat64(unsigned int frameNb) const;
 
 	uint32_t				_fileSize{};
 	uint16_t 				_audioFormat{};

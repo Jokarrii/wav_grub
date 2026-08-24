@@ -6,11 +6,11 @@
 #    By: Jokarrii <jonathan.bayet@gmail.com>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/07/22 17:05:49 by jbayet            #+#    #+#              #
-#    Updated: 2026/08/03 19:03:26 by Jokarrii         ###   ########.fr        #
+#    Updated: 2026/08/24 19:46:20 by Jokarrii         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SRCS = main.cpp Wav.cpp
+SRCS = main.cpp Wav.cpp printData.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 NAME = wav_viewer

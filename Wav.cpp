@@ -67,9 +67,36 @@ uint32_t Wav::frameCount() const
 	return (sampleCount() / _channels);
 }
 
-const std::vector<std::byte>& Wav::data() const
+void Wav::take_a_look_to_data(unsigned int frameNb) const
 {
-	return (_data);
+	if (frameNb > frameCount())
+	{
+		std::cout << "Max frame : " << frameCount() << std::endl;
+		frameNb = frameCount();
+	}
+	switch (_format)
+	{
+		case SampleFormat::PCM_U8:
+			printPCM8(frameNb);
+			break;
+		case SampleFormat::PCM_S16:
+			printPCM16(frameNb);
+			break;
+		case SampleFormat::PCM_S24:
+			printPCM24(frameNb);
+			break;
+		case SampleFormat::PCM_S32:
+			printPCM32(frameNb);
+			break;
+		case SampleFormat::FLOAT32:
+			printFloat32(frameNb);
+			break;
+		case SampleFormat::FLOAT64:
+			printFloat64(frameNb);
+			break;
+		default:
+			throw std::runtime_error("Unsupported sample format");
+	}
 }
 
 /*---------------- member fonction -----------------*/
