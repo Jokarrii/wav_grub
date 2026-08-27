@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <cstring>
+#include <iomanip>
 
 class Wav
 {
@@ -35,10 +36,22 @@ public:
 	uint16_t	blockAlign() const;
 	uint16_t	bitsPerSample() const;
 	uint32_t	dataSize() const;
-	uint32_t	sampleCount() const;
-	uint32_t	frameCount() const;
-	void		take_a_look_to_data(unsigned int frameNb) const;
+	/*print previously ^^ */
+	void		print_fmt_info() const;
 
+/*-------------- time info ---------------*/
+	uint32_t	sampleCount() const;
+	uint32_t	framesCount() const;
+	void		wav_time() const;
+	/*print previously ^^ */
+	void		print_time_info() const;
+
+/*------------ audio analysis -------------*/
+	void		print_loudness_info() const;
+
+/*-------------- Data look ---------------*/
+	void		take_a_look_to_data() const;
+	void		visualiser() const;
 private:
 
 	static bool checkID(std::ifstream& file, const char expected[4]);
@@ -46,6 +59,7 @@ private:
 	void readChunks(std::ifstream& file);
 	void readFmtChunk(std::ifstream& file, uint32_t chunkSize);
 	void readDataChunk(std::ifstream& file, uint32_t chunkSize);
+	void readOtherChunk(std::ifstream& file, char *chunkID, uint32_t chunkSize);
 	SampleFormat determineFormat() const;
 
 	void printPCM8(unsigned int frameNb) const;
