@@ -26,11 +26,13 @@ void print_menu()
 	std::cout << "║               WAV_GRUB               ║" << std::endl;
 	std::cout << "╠══════════════════════════════════════╣" << std::endl;
 	std::cout << "║  0 - Quit                            ║" << std::endl;
-	std::cout << "║  1 - Fmt info                        ║" << std::endl;
-	std::cout << "║  2 - Time info                       ║" << std::endl;
-	std::cout << "║  3 - Loudness info                   ║" << std::endl;
-	std::cout << "║  4 - Print brut data                 ║" << std::endl;
-	std::cout << "║  5 - Wav visualiser                  ║" << std::endl;
+	std::cout << "║  1 - Format info                     ║" << std::endl;
+	std::cout << "║  2 - iXML info                       ║" << std::endl;
+	std::cout << "║  3 - Bext info                       ║" << std::endl;
+	std::cout << "║  4 - Time info                       ║" << std::endl;
+	std::cout << "║  5 - Loudness info                   ║" << std::endl;
+	std::cout << "║  6 - Print brut data                 ║" << std::endl;
+	std::cout << "║  7 - Wav visualiser                  ║" << std::endl;
 	std::cout << "╚══════════════════════════════════════╝" << std::endl;
 }
 
@@ -103,6 +105,8 @@ int get_menu_choice()
 			return 4;
 		if (input == "5")
 			return 5;
+		if (input == "6")
+			return 6;
 
 		std::cout << "Invalid choice.\n";
 	}
@@ -124,19 +128,23 @@ bool menu(Wav const & wav)
 				break;
 
 			case 2:
-				wav.print_time_info();
+				wav.print_iXML_info();
 				break;
 
 			case 3:
-				wav.print_loudness_info();
+				wav.printBextInfo();
 				break;
 
 			case 4:
-				wav.take_a_look_to_data();
+				wav.print_time_info();
 				break;
 
 			case 5:
-				wav.visualiser();
+				wav.print_loudness_info();
+				break;
+
+			case 6:
+				wav.take_a_look_to_data();
 				break;
 		}
 

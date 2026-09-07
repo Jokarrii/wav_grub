@@ -2,20 +2,21 @@
 
 void Wav::printPCM8(unsigned int frameNb) const
 {
-	std::cout << "Take a look to the " << frameNb << " first frame data" << std::endl;
+	std::cout << std::endl << "Take a look to the " << frameNb << " first frame data" << std::endl << std::endl;
+	std::cout << std::left << std::setw(12) << "";
 	for (int i = 1; i <= _channels; ++i)
-		std::cout << "\t\tCanal " << i << "\t\t";
+		std::cout << std::right << std::setw(15) << "Canal " + std::to_string(i);
 	std::cout << std::endl;
 
 	uint8_t sample;
 
 	for (unsigned int i = 0; i < frameNb; ++i)
 	{
-		std::cout << "Frame " << i << ": \t" ;
+		std::cout << std::left << std::setw(12) << ("Frame " + std::to_string(i));
 		for (int j = 0; j < _channels; ++j)
 		{
 			sample = std::to_integer<uint8_t>(_data[i * _channels + j]);
-			std::cout << static_cast<unsigned int>(sample) << "\t\t";
+			std::cout << std::right << std::setw(15) << static_cast<unsigned int>(sample);
 		}
 		std::cout << std::endl;
 	}
@@ -23,17 +24,18 @@ void Wav::printPCM8(unsigned int frameNb) const
 
 void Wav::printPCM16(unsigned int frameNb) const
 {
-	std::cout << "Take a look to the " << frameNb << " first frame data" << std::endl;
+	std::cout << std::endl << "Take a look to the " << frameNb << " first frame data" << std::endl << std::endl;
+	std::cout << std::left << std::setw(12) << "";
 
 	for (int i = 1; i <= _channels; ++i)
-		std::cout << "\t\tCanal " << i << "\t\t";
+		std::cout << std::right << std::setw(15) << "Canal " + std::to_string(i);
 	std::cout << std::endl;
 
 	int16_t sample;
 
 	for (unsigned int i = 0; i < frameNb; ++i)
 	{
-		std::cout << "Frame " << i << ": \t";
+		std::cout << std::left << std::setw(12) << ("Frame " + std::to_string(i));
 
 		for (unsigned int j = 0; j < _channels; ++j)
 		{
@@ -46,7 +48,7 @@ void Wav::printPCM16(unsigned int frameNb) const
 
 			sample = static_cast<int16_t>(value);
 
-			std::cout << sample << "\t\t";
+			std::cout << std::right << std::setw(15) << sample;
 		}
 		std::cout << std::endl;
 	}
@@ -54,18 +56,18 @@ void Wav::printPCM16(unsigned int frameNb) const
 
 void Wav::printPCM24(unsigned int frameNb) const
 {
-	std::cout << "Take a look to the " << frameNb
-			  << " first frame data" << std::endl;
+	std::cout << std::endl << "Take a look to the " << frameNb << " first frame data" << std::endl << std::endl;
+	std::cout << std::left << std::setw(12) << "";
 
 	for (unsigned int i = 1; i <= _channels; ++i)
-		std::cout << "\t\tCanal " << i << "\t\t";
+		std::cout << std::right << std::setw(15) << "Canal " + std::to_string(i);
 	std::cout << std::endl;
 
 	int32_t sample;
 
 	for (unsigned int i = 0; i < frameNb; ++i)
 	{
-		std::cout << "Frame " << i << ": \t\t";
+		std::cout << std::left << std::setw(12) << ("Frame " + std::to_string(i));
 
 		for (unsigned int j = 0; j < _channels; ++j)
 		{
@@ -85,7 +87,7 @@ void Wav::printPCM24(unsigned int frameNb) const
 
 			sample = static_cast<int32_t>(value);
 
-			std::cout << sample << "\t\t";
+			std::cout << std::right << std::setw(15) << sample;
 		}
 		std::cout << std::endl;
 	}
@@ -93,18 +95,18 @@ void Wav::printPCM24(unsigned int frameNb) const
 
 void Wav::printPCM32(unsigned int frameNb) const
 {
-	std::cout << "Take a look to the " << frameNb
-			  << " first frame data" << std::endl;
+	std::cout << std::endl << "Take a look to the " << frameNb << " first frame data" << std::endl << std::endl;
+	std::cout << std::left << std::setw(12) << "";
 
 	for (unsigned int i = 1; i <= _channels; ++i)
-		std::cout << "\t\tCanal " << i << "\t\t";
+		std::cout << std::right << std::setw(15) << "Canal " + std::to_string(i);
 	std::cout << std::endl;
 
 	int32_t sample;
 
 	for (unsigned int i = 0; i < frameNb; ++i)
 	{
-		std::cout << "Frame " << i << ": \t\t";
+		std::cout << std::left << std::setw(12) << ("Frame " + std::to_string(i));
 
 		for (unsigned int j = 0; j < _channels; ++j)
 		{
@@ -123,7 +125,7 @@ void Wav::printPCM32(unsigned int frameNb) const
 
 			sample = static_cast<int32_t>(value);
 
-			std::cout << sample << "\t\t";
+			std::cout << std::right << std::setw(15) << sample;
 		}
 		std::cout << std::endl;
 	}
@@ -131,18 +133,18 @@ void Wav::printPCM32(unsigned int frameNb) const
 
 void Wav::printFloat32(unsigned int frameNb) const
 {
-	std::cout << "Take a look to the " << frameNb
-			  << " first frame data" << std::endl;
+	std::cout << std::endl << "Take a look to the " << frameNb << " first frame data" << std::endl << std::endl;
+	std::cout << std::left << std::setw(12) << "";
 
 	for (unsigned int i = 1; i <= _channels; ++i)
-		std::cout << "\t\tCanal " << i << "\t\t";
+		std::cout << std::right << std::setw(15) << "Canal " + std::to_string(i);
 	std::cout << std::endl;
 
 	float sample;
 
 	for (unsigned int i = 0; i < frameNb; ++i)
 	{
-		std::cout << "Frame " << i << ": \t\t";
+		std::cout << std::left << std::setw(12) << ("Frame " + std::to_string(i));
 
 		for (unsigned int j = 0; j < _channels; ++j)
 		{
@@ -161,7 +163,7 @@ void Wav::printFloat32(unsigned int frameNb) const
 
 			std::memcpy(&sample, &value, sizeof(sample));
 
-			std::cout << sample << "\t\t";
+			std::cout << std::right << std::setw(15) << sample;
 		}
 		std::cout << std::endl;
 	}
@@ -169,18 +171,18 @@ void Wav::printFloat32(unsigned int frameNb) const
 
 void Wav::printFloat64(unsigned int frameNb) const
 {
-	std::cout << "Take a look to the " << frameNb
-			  << " first frame data" << std::endl;
+	std::cout << std::endl << "Take a look to the " << frameNb << " first frame data" << std::endl << std::endl;
+	std::cout << std::left << std::setw(12) << "";
 
 	for (unsigned int i = 1; i <= _channels; ++i)
-		std::cout << "\t\tCanal " << i << "\t\t";
+		std::cout << std::right << std::setw(15) << "Canal " + std::to_string(i);
 	std::cout << std::endl;
 
 	double sample;
 
 	for (unsigned int i = 0; i < frameNb; ++i)
 	{
-		std::cout << "Frame " << i << ": \t\t";
+		std::cout << std::left << std::setw(12) << ("Frame " + std::to_string(i));
 
 		for (unsigned int j = 0; j < _channels; ++j)
 		{
@@ -207,7 +209,7 @@ void Wav::printFloat64(unsigned int frameNb) const
 
 			std::memcpy(&sample, &value, sizeof(sample));
 
-			std::cout << sample << "\t\t";
+			std::cout << std::right << std::setw(15) << sample;
 		}
 		std::cout << std::endl;
 	}

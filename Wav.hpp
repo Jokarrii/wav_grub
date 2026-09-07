@@ -9,6 +9,23 @@
 #include <cstring>
 #include <iomanip>
 
+struct BextInfo
+{
+	std::string description;
+	std::string originator;
+	std::string originatorReference;
+	std::string originationDate;
+	std::string originationTime;
+
+	uint32_t timeReferenceLow;
+	uint32_t timeReferenceHigh;
+	uint16_t version;
+
+	std::string reserved;
+	std::string umid;
+	std::string codingHistory;
+};
+
 class Wav
 {
 public:
@@ -39,6 +56,9 @@ public:
 	/*print previously ^^ */
 	void		print_fmt_info() const;
 
+	void print_iXML_info() const;
+	void printBextInfo() const;
+
 /*-------------- time info ---------------*/
 	uint32_t	sampleCount() const;
 	uint32_t	framesCount() const;
@@ -51,7 +71,6 @@ public:
 
 /*-------------- Data look ---------------*/
 	void		take_a_look_to_data() const;
-	void		visualiser() const;
 private:
 
 	static bool checkID(std::ifstream& file, const char expected[4]);
@@ -59,6 +78,8 @@ private:
 	void readChunks(std::ifstream& file);
 	void readFmtChunk(std::ifstream& file, uint32_t chunkSize);
 	void readDataChunk(std::ifstream& file, uint32_t chunkSize);
+	void readIXMLChunk(std::ifstream& file, uint32_t chunkSize);
+	void readBextChunk(std::ifstream& file, uint32_t chunkSize);
 	void readOtherChunk(std::ifstream& file, char *chunkID, uint32_t chunkSize);
 	SampleFormat determineFormat() const;
 
@@ -77,6 +98,8 @@ private:
 	uint16_t 				_blockAlign{};
 	uint16_t 				_bitsPerSample{};
 	SampleFormat			_format{SampleFormat::UNKNOWN};
+	std::string				_ixml{};
+	BextInfo				_bext{};
 	uint32_t 				_dataSize{};
 	std::vector<std::byte>	_data;
 };

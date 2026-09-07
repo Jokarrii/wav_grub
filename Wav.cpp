@@ -69,6 +69,34 @@ void Wav::print_fmt_info() const
 		std::cout << "Data size: " << this->dataSize() << std::endl;
 }
 
+void Wav::print_iXML_info() const
+{
+	if (_ixml.empty())
+	{
+		std::cout << "No iXML chunk in the wav file" << std::endl;
+		return ;
+	}
+	std::cout << "iXML chunk:" << std::endl;
+	std::cout << _ixml;
+	std::cout << std::endl;
+}
+
+void Wav::printBextInfo() const
+{
+	std::cout << "\n===== BEXT INFO =====" << std::endl;
+	std::cout << "Description: " << _bext.description << std::endl;
+	std::cout << "Originator: " << _bext.originator << std::endl;
+	std::cout << "Originator Reference: " << _bext.originatorReference << std::endl;
+	std::cout << "Origination Date: " << _bext.originationDate << std::endl;
+	std::cout << "Origination Time: " << _bext.originationTime << std::endl;
+	std::cout << "Time Reference Low: " << _bext.timeReferenceLow << std::endl;
+	std::cout << "Time Reference High: " << _bext.timeReferenceHigh << std::endl;
+	std::cout << "Version: " << _bext.version << std::endl;
+	std::cout << "UMID: " << _bext.umid << std::endl;
+	std::cout << "Coding History:" << std::endl;
+	std::cout << _bext.codingHistory << std::endl;
+}
+
 /*-------------- time info ---------------*/
 
 uint32_t Wav::sampleCount() const
@@ -176,11 +204,6 @@ void Wav::take_a_look_to_data() const
 	}
 }
 
-void Wav::visualiser() const
-{
-	std::cout << "Visualiser be implemented soon !!" << std::endl;
-}
-
 /*---------------- member fonction -----------------*/
 
 Wav::SampleFormat Wav::determineFormat() const
@@ -244,6 +267,10 @@ void Wav::readChunks(std::ifstream& file)
 			readFmtChunk(file, chunkSize);
 		else if (memcmp(chunkID, "data", 4) == 0)
 			readDataChunk(file, chunkSize);
+		else if (memcmp(chunkID, "iXML", 4) == 0)
+			readIXMLChunk(file, chunkSize);
+		else if (memcmp(chunkID, "bext", 4) == 0)
+			readBextChunk(file, chunkSize);
 		else if (memcmp(chunkID, "JUNK", 4) == 0)
 			file.seekg(chunkSize, std::ios::cur);
 		else
@@ -264,7 +291,7 @@ void Wav::readFmtChunk(std::ifstream& file, uint32_t chunkSize)
 	_format = determineFormat();
 	if (chunkSize > 16)
 		file.seekg(chunkSize - 16, std::ios::cur);
-	std::cout << "fmt chunk acquisition completed" << std::endl;
+	std::cout << "fmt  chunk acquisition completed" << std::endl;
 }
 
 void Wav::readDataChunk(std::ifstream& file, uint32_t chunkSize)
@@ -275,6 +302,50 @@ void Wav::readDataChunk(std::ifstream& file, uint32_t chunkSize)
 	if (!file)
 		throw std::runtime_error("Error while reading data chunk");
 	std::cout << "DATA chunk acquisition completed" << std::endl;
+}
+
+void Wav::readIXMLChunk(std::ifstream& file, uint32_t chunkSize)
+{
+	_ixml.resize(chunkSize);
+
+	file.read(_ixml.data(), chunkSize);
+
+	if (!file)
+		throw std::runtime_error("Error while reading iXML chunk");
+	std::cout << "iXML chunk acquisition completed" << std::endl;
+}
+
+void Wav::readBextChunk(std::ifstream& file, uint32_t chunkSize)
+{
+	if (chunkSize < 602)
+		throw std::runtime_error("Unsupported bext chunk size");
+
+	_bext.description.resize(256);
+	file.read(_bext.description.data(), 256);
+	_bext.originator.resize(32);
+	file.read(_bext.originator.data(), 32);
+	_bext.originatorReference.resize(32);
+	file.read(_bext.originatorReference.data(), 32);
+	_bext.originationDate.resize(10);
+	file.read(_bext.originationDate.data(), 10);
+	_bext.originationTime.resize(8);
+	file.read(_bext.originationTime.data(), 8);
+	file.read(reinterpret_cast<char*>(&_bext.timeReferenceLow), sizeof(_bext.timeReferenceLow));
+	file.read(reinterpret_cast<char*>(&_bext.timeReferenceHigh), sizeof(_bext.timeReferenceHigh));
+	file.read(reinterpret_cast<char*>(&_bext.version), sizeof(_bext.version));
+	_bext.umid.resize(64);
+	file.read(_bext.umid.data(), 64);
+	_bext.reserved.resize(190);
+	file.read(_bext.reserved.data(), 190);
+
+	std::size_t codingHistorySize = chunkSize - 602;
+	_bext.codingHistory.resize(codingHistorySize);
+	file.read(_bext.codingHistory.data(), codingHistorySize);
+
+	if (!file)
+		throw std::runtime_error("Error while reading bext chunk");
+
+	std::cout << "bext chunk acquisition completed" << std::endl;
 }
 
 void Wav::readOtherChunk(std::ifstream& file, char *chunkID, uint32_t chunkSize)
