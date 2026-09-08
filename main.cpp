@@ -4,6 +4,10 @@
 #include <filesystem>
 #include "Wav.hpp"
 
+#ifdef _WIN32
+# include <windows.h>
+#endif
+
 void print_banner(void)
 {
 	std::cout << std::endl;
@@ -30,9 +34,7 @@ void print_menu()
 	std::cout << "║  2 - iXML info                       ║" << std::endl;
 	std::cout << "║  3 - Bext info                       ║" << std::endl;
 	std::cout << "║  4 - Time info                       ║" << std::endl;
-	std::cout << "║  5 - Loudness info                   ║" << std::endl;
-	std::cout << "║  6 - Print brut data                 ║" << std::endl;
-	std::cout << "║  7 - Wav visualiser                  ║" << std::endl;
+	std::cout << "║  5 - Print brut data                 ║" << std::endl;
 	std::cout << "╚══════════════════════════════════════╝" << std::endl;
 }
 
@@ -91,7 +93,11 @@ int get_menu_choice()
 	{
 		print_menu();
 		std::cout << "Choice: ";
-		std::cin >> input;
+		if (!(std::cin >> input))
+		{
+			std::cin.clear();
+			return 0;
+		}
 
 		if (input == "0")
 			return 0;
@@ -105,14 +111,12 @@ int get_menu_choice()
 			return 4;
 		if (input == "5")
 			return 5;
-		if (input == "6")
-			return 6;
 
 		std::cout << "Invalid choice.\n";
 	}
 }
 
-bool menu(Wav const & wav)
+void menu(Wav const & wav)
 {
 	while (true)
 	{
@@ -121,7 +125,7 @@ bool menu(Wav const & wav)
 		switch (choice)
 		{
 			case 0:
-				return 0;
+				return ;
 
 			case 1:
 				wav.print_fmt_info();
@@ -140,10 +144,6 @@ bool menu(Wav const & wav)
 				break;
 
 			case 5:
-				wav.print_loudness_info();
-				break;
-
-			case 6:
 				wav.take_a_look_to_data();
 				break;
 		}
@@ -156,6 +156,11 @@ bool menu(Wav const & wav)
 
 int	main(int argc, char **argv)
 {
+	#ifdef _WIN32
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
+	#endif
+	
 	if (argc > 2)
 	{
 		std::cout	<< "Wrong number of argument." << std::endl

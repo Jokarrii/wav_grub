@@ -60,20 +60,21 @@ uint32_t Wav::dataSize() const
 
 void Wav::print_fmt_info() const
 {
-		std::cout << std::endl << "Audio format: " << this->audioFormat() << std::endl;
-		std::cout << "Channels: " << this->channels() << std::endl;
-		std::cout << "sample rate: " << this->sampleRate() << std::endl;
-		std::cout << "byte rate: " << this->byteRate() << std::endl;
-		std::cout << "Block align: " << this->blockAlign() << std::endl;
-		std::cout << "bits per sample: " << this->bitsPerSample() << std::endl;
-		std::cout << "Data size: " << this->dataSize() << std::endl;
+	std::cout << "\n===== FORMAT INFO =====" << std::endl;
+	std::cout << std::endl << "Audio format: " << this->audioFormat() << std::endl;
+	std::cout << "Channels: " << this->channels() << std::endl;
+	std::cout << "sample rate: " << this->sampleRate() << std::endl;
+	std::cout << "byte rate: " << this->byteRate() << std::endl;
+	std::cout << "Block align: " << this->blockAlign() << std::endl;
+	std::cout << "bits per sample: " << this->bitsPerSample() << std::endl;
+	std::cout << "Data size: " << this->dataSize() << std::endl;
 }
 
 void Wav::print_iXML_info() const
 {
 	if (_ixml.empty())
 	{
-		std::cout << "No iXML chunk in the wav file" << std::endl;
+		std::cout << "No iXML chunk in this wav file" << std::endl;
 		return ;
 	}
 	std::cout << "iXML chunk:" << std::endl;
@@ -83,6 +84,11 @@ void Wav::print_iXML_info() const
 
 void Wav::printBextInfo() const
 {
+	if (!_bext.exists)
+	{
+		std::cout << "No bext chunk in this wav file" << std::endl;
+		return ;
+	}
 	std::cout << "\n===== BEXT INFO =====" << std::endl;
 	std::cout << "Description: " << _bext.description << std::endl;
 	std::cout << "Originator: " << _bext.originator << std::endl;
@@ -92,7 +98,15 @@ void Wav::printBextInfo() const
 	std::cout << "Time Reference Low: " << _bext.timeReferenceLow << std::endl;
 	std::cout << "Time Reference High: " << _bext.timeReferenceHigh << std::endl;
 	std::cout << "Version: " << _bext.version << std::endl;
-	std::cout << "UMID: " << _bext.umid << std::endl;
+	std::cout << "UMID: ";
+	for (std::size_t i = 0; i < _bext.umid.size(); ++i)
+		std::cout << std::hex << std::setw(2) << std::setfill('0') << std::to_integer<unsigned int>(_bext.umid[i]) << ' ';
+	std::cout << std::dec << std::setfill(' ') << std::endl;
+	std::cout << "LoudnessValue: " << _bext.LoudnessValue << std::endl;
+	std::cout << "LoudnessRange: " << _bext.LoudnessRange << std::endl;
+	std::cout << "MaxTruePeakLevel: " << _bext.MaxTruePeakLevel << std::endl;
+	std::cout << "MaxMomentaryLoudness: " << _bext.MaxMomentaryLoudness << std::endl;
+	std::cout << "MaxShortTermLoudness: " << _bext.MaxShortTermLoudness << std::endl;
 	std::cout << "Coding History:" << std::endl;
 	std::cout << _bext.codingHistory << std::endl;
 }
@@ -134,6 +148,7 @@ void Wav::wav_time() const
 				<< std::setw(2) << MM << ":"
 				<< std::setw(2) << SS << ":"
 				<< Frames << std::endl;
+	std::cout << std::dec << std::setfill(' ') << std::endl;
 }
 
 void Wav::print_time_info() const
@@ -142,14 +157,6 @@ void Wav::print_time_info() const
 	std::cout << "Frame count: " << this->framesCount() << std::endl;
 	this->wav_time();
 }
-
-/*------------ audio analysis -------------*/
-
-void Wav::print_loudness_info() const
-{
-	std::cout << "Loudness info be implemented soon !!" << std::endl;
-}
-
 
 /*-------------- Data look ---------------*/
 
@@ -160,8 +167,11 @@ void Wav::take_a_look_to_data() const
 	while (true)
 	{
 		std::cout << "\nEnter number of frames to display brut data (m to return to menu): ";
-		std::cin >> input;
-
+		if (!(std::cin >> input))
+		{
+			std::cin.clear();
+			return ;
+		}
 		if (input == "m" || input == "M")
 			return;
 		try
@@ -275,6 +285,9 @@ void Wav::readChunks(std::ifstream& file)
 			file.seekg(chunkSize, std::ios::cur);
 		else
 			readOtherChunk(file, chunkID, chunkSize);
+
+		if (chunkSize % 2 != 0)
+			file.seekg(1, std::ios::cur);
 	}
 }
 
@@ -288,6 +301,8 @@ void Wav::readFmtChunk(std::ifstream& file, uint32_t chunkSize)
 	file.read(reinterpret_cast<char*>(&_byteRate), sizeof(_byteRate));
 	file.read(reinterpret_cast<char*>(&_blockAlign), sizeof(_blockAlign));
 	file.read(reinterpret_cast<char*>(&_bitsPerSample), sizeof(_bitsPerSample));
+	if (!file)
+		throw std::runtime_error("Error while reading fmt chunk");
 	_format = determineFormat();
 	if (chunkSize > 16)
 		file.seekg(chunkSize - 16, std::ios::cur);
@@ -333,10 +348,18 @@ void Wav::readBextChunk(std::ifstream& file, uint32_t chunkSize)
 	file.read(reinterpret_cast<char*>(&_bext.timeReferenceLow), sizeof(_bext.timeReferenceLow));
 	file.read(reinterpret_cast<char*>(&_bext.timeReferenceHigh), sizeof(_bext.timeReferenceHigh));
 	file.read(reinterpret_cast<char*>(&_bext.version), sizeof(_bext.version));
+
 	_bext.umid.resize(64);
-	file.read(_bext.umid.data(), 64);
-	_bext.reserved.resize(190);
-	file.read(_bext.reserved.data(), 190);
+	file.read(reinterpret_cast<char*>(_bext.umid.data()), 64);
+
+	file.read(reinterpret_cast<char*>(&_bext.LoudnessValue), sizeof(_bext.LoudnessValue));
+	file.read(reinterpret_cast<char*>(&_bext.LoudnessRange), sizeof(_bext.LoudnessRange));
+	file.read(reinterpret_cast<char*>(&_bext.MaxTruePeakLevel), sizeof(_bext.MaxTruePeakLevel));
+	file.read(reinterpret_cast<char*>(&_bext.MaxMomentaryLoudness), sizeof(_bext.MaxMomentaryLoudness));
+	file.read(reinterpret_cast<char*>(&_bext.MaxShortTermLoudness), sizeof(_bext.MaxShortTermLoudness));
+
+	_bext.reserved.resize(180);
+	file.read(reinterpret_cast<char*>(_bext.reserved.data()), 180);
 
 	std::size_t codingHistorySize = chunkSize - 602;
 	_bext.codingHistory.resize(codingHistorySize);
@@ -346,6 +369,7 @@ void Wav::readBextChunk(std::ifstream& file, uint32_t chunkSize)
 		throw std::runtime_error("Error while reading bext chunk");
 
 	std::cout << "bext chunk acquisition completed" << std::endl;
+	_bext.exists = true;
 }
 
 void Wav::readOtherChunk(std::ifstream& file, char *chunkID, uint32_t chunkSize)
@@ -356,7 +380,8 @@ void Wav::readOtherChunk(std::ifstream& file, char *chunkID, uint32_t chunkSize)
 	if (!file)
 		throw std::runtime_error("Error while reading Other chunk");
 
-	std::cout << chunkID << " chunk (" << chunkSize << " bytes):" << std::endl;
+	std::cout.write(chunkID, 4);
+	std::cout << " chunk (" << chunkSize << " bytes):" << std::endl;
 
 	for (std::size_t i = 0; i < data.size(); ++i)
 	{

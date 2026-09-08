@@ -2,7 +2,7 @@ SRCS = main.cpp Wav.cpp printData.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 NAME = wav_grub
-WIN_NAME = wav_viewer.exe
+WIN_NAME = wav_grub.exe
 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++20
 

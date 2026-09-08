@@ -11,6 +11,7 @@
 
 struct BextInfo
 {
+	bool		exists = false;
 	std::string description;
 	std::string originator;
 	std::string originatorReference;
@@ -21,8 +22,15 @@ struct BextInfo
 	uint32_t timeReferenceHigh;
 	uint16_t version;
 
-	std::string reserved;
-	std::string umid;
+	std::vector<std::byte> umid;
+
+	int16_t LoudnessValue;
+	int16_t LoudnessRange;
+	int16_t MaxTruePeakLevel;
+	int16_t MaxMomentaryLoudness;
+	int16_t MaxShortTermLoudness;
+
+	std::vector<std::byte> reserved;
 	std::string codingHistory;
 };
 
@@ -66,9 +74,6 @@ public:
 	/*print previously ^^ */
 	void		print_time_info() const;
 
-/*------------ audio analysis -------------*/
-	void		print_loudness_info() const;
-
 /*-------------- Data look ---------------*/
 	void		take_a_look_to_data() const;
 private:
@@ -91,9 +96,9 @@ private:
 	void printFloat64(unsigned int frameNb) const;
 
 	uint32_t				_fileSize{};
-	uint16_t 				_audioFormat{};
+	uint16_t 				_audioFormat{}; //WORD
 	uint16_t 				_channels{};
-	uint32_t 				_sampleRate{};
+	uint32_t 				_sampleRate{}; //DWORD
 	uint32_t 				_byteRate{};
 	uint16_t 				_blockAlign{};
 	uint16_t 				_bitsPerSample{};
